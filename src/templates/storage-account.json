@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "location": {
+        "type": "string"
+      },
+      "storageAccountName": {
+        "type": "string",
+        "metadata": {
+          "Description": "The name of the new storage account created to store the VMs disks"
+        }
+      },
+      "storageAccountType": {
+        "type": "string",
+        "allowedValues": [
+          "Standard_LRS"
+        ],
+        "metadata": {
+          "Description": "The type of the Storage Account created"
+        },
+        "defaultValue": "Standard_LRS"
+      },
+      "tags": {
+          "type": "object"
+      }
+    },
+    "variables": {
+      "apiVersions": {
+        "sa": "2018-02-01"
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "[concat(parameters('storageAccountName'))]",
+        "apiVersion": "[variables('apiVersions').sa]",
+        "location": "[parameters('location')]",
+        "tags": "[parameters('tags')]",
+        "sku": {
+          "name": "[parameters('storageAccountType')]"
+        }
+      }
+    ],
+    "outputs": {
+      "accesskey": {
+        "type": "string",
+        "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('apiVersions').sa).keys[0].value]"
+      }
+    }
+  }
+  
