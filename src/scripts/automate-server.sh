@@ -51,7 +51,7 @@ chef-server-ctl org-create "${CHEFORG}" "${CHEFORGDESCRIPTION}" --association-us
 #
 
 # Define some variables to be used in the configuration files
-automate_url="https;//${FQDN}"
+automate_url="https://${FQDN}"
 chef_server_url="https://${FQDN}/organizations/${CHEFORG}"
 
 # Create the knife.rb file
@@ -79,10 +79,11 @@ Automate admin password: ${CS_PASSWORD}
 EOF
 
 # Zip up the Starter Kit location directory
+cwd=$PWD
 zip_filename="/home/${USERNAME}/starterkit-${CHEFORG}.zip"
-pushd $STARTERKITLOCATION
+cd $STARTERKITLOCATION
 zip -r $zip_filename .
-popd
+cd $cwd
 
 # Upload zip file to Keyvaule
 #
