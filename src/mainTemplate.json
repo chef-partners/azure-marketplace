@@ -100,7 +100,7 @@
         },
         "baseUrl": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/stuartpreston/azure-marketplace/master/src/",
+            "defaultValue": "https://raw.githubusercontent.com/chef-partners/azure-marketplace/master/src/",
             "metadata": {
                 "description": "URL from which nested templates can be found",
                 "artifactsBaseUrl": ""
