@@ -27,7 +27,17 @@
     },
     "variables": {
       "apiVersions": {
-        "sa": "2018-02-01"
+        "sa": "2019-04-01"
+      },
+
+      "accountSasProperties": {
+        "type": "object",
+        "defaultValue": {
+          "signedServices": "b",
+          "signedPermission": "w",
+          "signedResourceTypes": "c",
+          "signedExpiry": ""
+        }
       }
     },
     "resources": [
@@ -39,7 +49,17 @@
         "tags": "[parameters('tags')]",
         "sku": {
           "name": "[parameters('storageAccountType')]"
-        }
+        },
+        "resources": [
+          {
+            "name": "default/starterkits",
+            "type": "blobServices/containers",
+            "apiVersion": "[variables('apiVersions').sa]",
+            "dependsOn":[
+              "[parameters('storageAccountName')]"
+            ]
+          }
+        ]
       }
     ],
     "outputs": {
