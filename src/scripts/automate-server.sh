@@ -85,6 +85,59 @@ cd $STARTERKITLOCATION
 zip -r $zip_filename .
 cd $cwd
 
-# Upload zip file to Keyvaule
+# Upload zip file to Storage container
 #
-# TODO
+
+# get details about the zip file to upload
+filename=$(basename ${zip_filename})
+file_length=$(wc --bytes ${zip_filename})
+file_type=$(file --mime-type -b ${zip_filename})
+file_md5=$(md5sum -b ${zip_filename} | awk `{ print $1 }`)
+
+container_name="starterkits"
+
+# Define values that are required for the headers
+request_method="PUT"
+request_date=$(TZ=GMT LC_ALL=en_US.utf8 date "+%a, %d %h %Y %H:%M:%S %Z")
+
+# HTTP Request headers
+x_ms_date="x-ms-date:${request_date}"
+x_ms_version="x-ms-version:${SAAPIVERSION}"
+x_ms_blob_type="x-ms-blob-type:BlockBlob"
+
+# Build the signature string
+canonicalized_headers="${x_ms_blob_type}\n${x_ms_date}\n${x_ms_version}"
+canonicalized_resource="/${SANAME}/${container_name}/${filename}"
+
+#StringToSign = VERB + "\n" +
+#               Content-Encoding + "\n" +
+#               Content-Language + "\n" +
+#               Content-Length + "\n" +
+#               Content-MD5 + "\n" +
+#               Content-Type + "\n" +
+#               Date + "\n" +
+#               If-Modified-Since + "\n" +
+#               If-Match + "\n" +
+#               If-None-Match + "\n" +
+#               If-Unmodified-Since + "\n" +
+#               Range + "\n" +
+#               CanonicalizedHeaders +
+#               CanonicalizedResource;
+string_to_sign="${request_method}\n\n\n${file_length}\n${file_md5}\n${file_type}\n\n\n\n\n\n\n${canonicalized_headers}\n${canonicalized_resource}\ncomp:list\nrestype:container"
+
+# Decode the Base64 encoded access key, convert to Hex.
+decoded_hex_key="$(echo -n $SAACCESSKEY | base64 -d -w0 | xxd -p -c256)"
+
+# Create the HMAC signature for the Authorization header
+signature=$(printf "$string_to_sign" | openssl dgst -sha256 -mac HMAC -macopt "hexkey:$decoded_hex_key" -binary |  base64 -w0)
+
+# Create the authorization header
+authorization_header="Authorization: SharedKey $SANAME:$signature"
+
+curl -X ${request_method} \
+     -T ${zip_filename} \
+     -H "${x_ms_date}" \
+     -H "${x_ms_version}" \
+     -H "${x_ms_blob_type}" \
+     -H "${authorization_header}" \
+     -H "Content-Type: ${file_type}"

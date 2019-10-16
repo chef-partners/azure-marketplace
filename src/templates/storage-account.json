@@ -66,6 +66,10 @@
       "accesskey": {
         "type": "string",
         "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), variables('apiVersions').sa).keys[0].value]"
+      },
+      "apiVersion": {
+        "type": "string",
+        "value": "[variables('apiVersions').sa]"
       }
     }
   }
