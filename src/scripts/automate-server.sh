@@ -2,7 +2,7 @@
 
 # Install Prerequisites
 apt-get update -y && sudo apt-get upgrade -y
-apt-get install lvm2 xfsprogs sysstat atop jq -y
+apt-get install lvm2 xfsprogs sysstat atop jq zip -y
 
 # Decode Parameters
 VARS=`echo $2 | base64 --decode | jq -r '. | keys[] as $k | "\($k)=\"\(.[$k])\""'`
@@ -39,16 +39,50 @@ echo 'enabled = false' >> config.toml
 
 # Create first Chef Server admin user and first Chef Server org
 STARTERKITLOCATION="/home/${USERNAME}/${CHEFORG}/starter-kit"
-mkdir -p "${STARTERKITLOCATION}"
+mkdir -p "${STARTERKITLOCATION}/extras"
+mkdir -p "${STARTERKITLOCATION}/.chef"
 
 CS_PASSWORD=`awk '/password/{print $3}' /root/automate-credentials.toml`
-chef-server-ctl user-create admin Chef Admin nobody@example.com ${CS_PASSWORD} --filename "${STARTERKITLOCATION}/admin.pem"
+chef-server-ctl user-create admin Chef Admin nobody@example.com ${CS_PASSWORD} --filename "${STARTERKITLOCATION}/.chef/admin.pem"
 chef-server-ctl grant-server-admin-permissions admin
-chef-server-ctl org-create "${CHEFORG}" "${CHEFORGDESCRIPTION}" --association-user admin --filename "${STARTERKITLOCATION}/validation.pem"
+chef-server-ctl org-create "${CHEFORG}" "${CHEFORGDESCRIPTION}" --association-user admin --filename "${STARTERKITLOCATION}/.chef/validation.pem"
 
 # Create zip file
 #
-# TODO
+
+# Define some variables to be used in the configuration files
+automate_url="https;//${FQDN}"
+chef_server_url="https://${FQDN}/organizations/${CHEFORG}"
+
+# Create the knife.rb file
+cat <<- EOF > "${STARTERKITLOCATION}/.chef/knife.rb"
+current_dir = ::File.dirname(__FILE__)
+log_level                 :info
+log_location              \$stdout
+node_name                 "admin"
+client_key                ::File.join(current_dir, "admin.key")
+validation_client_name    "${CHEFORG}-validator"
+validation_key            ::File.join(current_dir, "validator.pem")
+chef_server_url           "${chef_server_url}"
+cookbook_path             [::File.join(current_dir, "../cookbooks")]
+EOF
+
+# Create the credentials file
+cat <<- EOF > "${STARTERKITLOCATION}/credentials.txt"
+Chef Server URL: ${chef_server_url}
+User username: admin
+User password: ${CS_PASSWORD}
+
+Automate URL: ${automate_url}
+Automate admin username: 
+Automate admin password: ${CS_PASSWORD}
+EOF
+
+# Zip up the Starter Kit location directory
+zip_filename="/home/${USERNAME}/starterkit-${CHEFORG}.zip"
+pushd $STARTERKITLOCATION
+zip -r $zip_filename .
+popd
 
 # Upload zip file to Keyvaule
 #
