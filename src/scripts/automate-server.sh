@@ -7,7 +7,7 @@ apt-get install lvm2 xfsprogs sysstat atop jq zip -y
 # Decode Parameters
 VARS=`echo $2 | tee args_b64 | base64 --decode | tee args | jq -r '. | keys[] as $k | "\($k)=\"\(.[$k])\""'`
 for VAR in "$VARS"; do eval "$VAR"; done
-
+  
 # Mount 2nd disk
 pvcreate -f /dev/sdc
 vgcreate chef /dev/sdc
@@ -92,7 +92,7 @@ cd $cwd
 filename=$(basename ${zip_filename})
 file_length=$(wc --bytes ${zip_filename})
 file_type=$(file --mime-type -b ${zip_filename})
-file_md5=$(md5sum -b ${zip_filename} | awk `{ print $1 }`)
+file_md5=$(md5sum -b ${zip_filename} | awk '{ print $1 }')
 
 container_name="starterkits"
 
@@ -134,10 +134,14 @@ signature=$(printf "$string_to_sign" | openssl dgst -sha256 -mac HMAC -macopt "h
 # Create the authorization header
 authorization_header="Authorization: SharedKey $SANAME:$signature"
 
+# Build the url that is to be used
+url=$(printf "https://%s.blob.core.windows.net/%s/%s" $SANAME $container_name $filename)
+
 curl -X $request_method \
      -T $zip_filename \
      -H "${x_ms_date}" \
      -H "${x_ms_version}" \
      -H "${x_ms_blob_type}" \
      -H "${authorization_header}" \
-     -H "Content-Type: ${file_type}"
+     -H "Content-Type: ${file_type}" \
+     $url
