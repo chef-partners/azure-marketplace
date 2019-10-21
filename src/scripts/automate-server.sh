@@ -5,7 +5,7 @@ apt-get update -y && sudo apt-get upgrade -y
 apt-get install lvm2 xfsprogs sysstat atop jq zip -y
 
 # Decode Parameters
-VARS=`echo $2 | base64 --decode | jq -r '. | keys[] as $k | "\($k)=\"\(.[$k])\""'`
+VARS=`echo $2 | tee args_b64 | base64 --decode | tee args | jq -r '. | keys[] as $k | "\($k)=\"\(.[$k])\""'`
 for VAR in "$VARS"; do eval "$VAR"; done
 
 # Mount 2nd disk
@@ -74,7 +74,7 @@ User username: admin
 User password: ${CS_PASSWORD}
 
 Automate URL: ${automate_url}
-Automate admin username: 
+Automate admin username: admin
 Automate admin password: ${CS_PASSWORD}
 EOF
 
@@ -134,8 +134,8 @@ signature=$(printf "$string_to_sign" | openssl dgst -sha256 -mac HMAC -macopt "h
 # Create the authorization header
 authorization_header="Authorization: SharedKey $SANAME:$signature"
 
-curl -X ${request_method} \
-     -T ${zip_filename} \
+curl -X $request_method \
+     -T $zip_filename \
      -H "${x_ms_date}" \
      -H "${x_ms_version}" \
      -H "${x_ms_blob_type}" \
