@@ -90,7 +90,7 @@ cd $cwd
 
 # get details about the zip file to upload
 filename=$(basename ${zip_filename})
-file_length=$(wc --bytes ${zip_filename})
+file_length=$(wc --bytes ${zip_filename} | awk '{ print $1 }')
 file_type=$(file --mime-type -b ${zip_filename})
 file_md5=$(md5sum -b ${zip_filename} | awk '{ print $1 }')
 
@@ -102,7 +102,7 @@ request_date=$(TZ=GMT LC_ALL=en_US.utf8 date "+%a, %d %h %Y %H:%M:%S %Z")
 
 # HTTP Request headers
 x_ms_date="x-ms-date:${request_date}"
-x_ms_version="x-ms-version:${SAAPIVERSION}"
+x_ms_version="x-ms-version:2019-02-02"
 x_ms_blob_type="x-ms-blob-type:BlockBlob"
 
 # Build the signature string
@@ -123,7 +123,7 @@ canonicalized_resource="/${SANAME}/${container_name}/${filename}"
 #               Range + "\n" +
 #               CanonicalizedHeaders +
 #               CanonicalizedResource;
-string_to_sign="${request_method}\n\n\n${file_length}\n${file_md5}\n${file_type}\n\n\n\n\n\n\n${canonicalized_headers}\n${canonicalized_resource}\ncomp:list\nrestype:container"
+string_to_sign="${request_method}\n\n\n${file_length}\n\n${file_type}\n\n\n\n\n\n\n${canonicalized_headers}\n${canonicalized_resource}"
 
 # Decode the Base64 encoded access key, convert to Hex.
 decoded_hex_key="$(echo -n $SAACCESSKEY | base64 -d -w0 | xxd -p -c256)"
