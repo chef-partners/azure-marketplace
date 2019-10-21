@@ -565,9 +565,8 @@
                             "FQDN": "[concat(reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value)]",
                             "CHEFORG": "[parameters('chefOrg')]",
                             "CHEFORGDESCRIPTION": "[parameters('chefOrgDescription')]",
-                            "SANAME": "[variables('name').sa]",
-                            "SAACCESSKEY": "[reference(concat(variables('name').sa, '-Deployment')).outputs.accesskey.value]",
-                            "SAAPIVERSION": "[reference(concat(variables('name').sa, '-Deployment')).outputs.apiVersion.value]",
+                            "SANAME": "[variables('name').storageAccount]",
+                            "SAACCESSKEY": "[reference(concat(variables('name').sa, '-Deployment')).outputs.accesskey.value]"
                         }
                     },
                     "extensionName": {
