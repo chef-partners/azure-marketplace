@@ -24,10 +24,6 @@ sysctl -p
 
 # Install Chef Automate
 
-# curl -s -H Metadata:true "http://169.254.169.254/metadata/instance/compute/tags?api-version=2018-10-01&format=text" | grep -oP '(?<=\bx-fqdn:)[^;]+' > /tmp/fqdn
-# FQDN=`cat /tmp/fqdn`
-# echo ${FQDN}
-
 cd /root
 curl https://packages.chef.io/files/current/latest/chef-automate-cli/chef-automate_linux_amd64.zip | gunzip - > chef-automate && chmod +x chef-automate
 ./chef-automate init-config
@@ -39,7 +35,6 @@ echo 'enabled = false' >> config.toml
 
 # Create first Chef Server admin user and first Chef Server org
 STARTERKITLOCATION="/home/${USERNAME}/${CHEFORG}/starter-kit"
-mkdir -p "${STARTERKITLOCATION}/extras"
 mkdir -p "${STARTERKITLOCATION}/.chef"
 
 CS_PASSWORD=`awk '/password/{print $3}' /root/automate-credentials.toml`
@@ -60,22 +55,21 @@ current_dir = ::File.dirname(__FILE__)
 log_level                 :info
 log_location              \$stdout
 node_name                 "admin"
-client_key                ::File.join(current_dir, "admin.key")
+client_key                ::File.join(current_dir, "admin.pem")
 validation_client_name    "${CHEFORG}-validator"
 validation_key            ::File.join(current_dir, "validator.pem")
 chef_server_url           "${chef_server_url}"
+ssl_verify_mode           :verify_none
 cookbook_path             [::File.join(current_dir, "../cookbooks")]
 EOF
 
 # Create the credentials file
 cat <<- EOF > "${STARTERKITLOCATION}/credentials.txt"
-Chef Server URL: ${chef_server_url}
-User username: admin
-User password: ${CS_PASSWORD}
+Welcome to Chef Automate. Your credentials are below:
 
-Automate URL: ${automate_url}
-Automate admin username: admin
-Automate admin password: ${CS_PASSWORD}
+Chef Automate URL: ${automate_url}
+Chef Automate username: admin
+Chef Automate password: ${CS_PASSWORD}
 EOF
 
 # Zip up the Starter Kit location directory
