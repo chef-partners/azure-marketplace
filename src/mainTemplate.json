@@ -583,13 +583,17 @@
         }
     ],
     "outputs": {
+        "ScpStarterKitCommand": {
+            "type": "string",
+            "value": "[concat('scp ',parameters('sshUser'),'@',reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value, ':~/starterkit-trial.zip starterkit-trial.zip')]"
+        },
+        "ApplianceSshLoginCommand": {
+            "type": "string",
+            "value": "[concat('ssh ',parameters('sshUser'),'@',reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value)]"
+        },
         "ChefAutomateUrl": {
             "type": "string",
             "value": "[concat('https://',reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value)]"
-        },
-        "SshCommand": {
-            "type": "string",
-            "value": "[concat('ssh ',parameters('sshUser'),'@',reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value)]"
         }
     }
 }
