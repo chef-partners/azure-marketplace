@@ -98,22 +98,20 @@
                 "description": "State if the template should try to auto discover the SAS token from the deployment. This is used when building and testing the template in VSTS."
             }
         },
-        "baseUrl": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/chef-partners/azure-marketplace/master/src/",
-            "metadata": {
-                "description": "URL from which nested templates can be found",
-                "artifactsBaseUrl": ""
-            }
-        },
-        "azureStorageSASToken": {
+        "_artifactsLocation": {
             "type": "string",
             "metadata": {
-                "description": "SAS token that has been generated if the templates are to be read from azure table storage"
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
             },
-            "defaultValue": ""            
+        "defaultValue": "[deployment().properties.templateLink.uri]"
         },
-
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
+            },
+            "defaultValue": ""
+        },
         "sshUser": {
             "type": "string",
             "metadata": {
@@ -164,9 +162,6 @@
 
         "unique": "[uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name, parameters('prefix'))]",
         "uniqueShort": "[if(empty(parameters('uniqueShort')), substring(variables('unique'), 0, 4), parameters('uniqueShort'))]",
-
-        "baseUrl": "[if(not(empty(parameters('baseUrl'))), if(endsWith(parameters('baseUrl'), '/'), parameters('baseUrl'), concat(parameters('baseUrl'), '/')), if(contains(deployment().properties, 'templateLink'), uri(deployment().properties.templateLink.uri, '.'), ''))]",
-
         "location": "[parameters('location')]",
 
         "name": {
@@ -250,35 +245,35 @@
         },
 
         "sasTokenFromDeployment": "[if(parameters('autoDiscoverSASToken'), if(contains(deployment().properties, 'templateLink'), if(equals(length(split(deployment().properties.templateLink.uri, '?')), 2), last(split(deployment().properties.templateLink.uri, '?')), ''), ''), '')]",
-        "templateUrlQueryString": "[if(empty(parameters('azureStorageSASToken')), if(empty(variables('sasTokenFromDeployment')), '', concat('?', variables('sasTokenFromDeployment'))), concat('?', parameters('azureStorageSASToken')))]",
+        "templateUrlQueryString": "[if(empty(parameters('_artifactsLocationSasToken')), if(empty(variables('sasTokenFromDeployment')), '', concat('?', variables('sasTokenFromDeployment'))), concat('?', parameters('_artifactsLocationSasToken')))]",
 
         "urls": {
-            "storageAccount": "[concat(variables('baseUrl'), 'templates/storage-account.json', variables('templateUrlQueryString'))]",
-            "virtualNetwork": "[concat(variables('baseUrl'), 'templates/virtual-network.json', variables('templateUrlQueryString'))]",
-            "publicIPAddress": "[concat(variables('baseUrl'), 'templates/public-ipaddress.json', variables('templateUrlQueryString'))]",
-            "networkInterfacePublic": "[concat(variables('baseUrl'), 'templates/network-interface-public.json', variables('templateUrlQueryString'))]",
-            "networkSecurityGroup": "[concat(variables('baseUrl'), 'templates/network-security-group.json', variables('templateUrlQueryString'))]",
-            "virtualMachine": "[concat(variables('baseUrl'), 'templates/virtual-machine.json', variables('templateUrlQueryString'))]",
-            "scriptExtension": "[concat(variables('baseUrl'), 'templates/script-extension.json', variables('templateUrlQueryString'))]",
-            "appServicePlan": "[concat(variables('baseUrl'), 'templates/app-service-plan.json', variables('templateUrlQueryString'))]",
-            "appService": "[concat(variables('baseUrl'), 'templates/app-service.json', variables('templateUrlQueryString'))]",
-            "appServiceFunctions": "[concat(variables('baseUrl'), 'templates/app-service-functions.json', variables('templateUrlQueryString'))]",
-            "applicationInsights": "[concat(variables('baseUrl'), 'templates/application-insights.json', variables('templateUrlQueryString'))]",
-            "logAnalytics": "[concat(variables('baseUrl'), 'templates/log-analytics.json', variables('templateUrlQueryString'))]",
-            "monitorAlerts": "[concat(variables('baseUrl'), 'templates/monitor-alerts.json', variables('templateUrlQueryString'))]",
-            "logAnalyticsExtension": "[concat(variables('baseUrl'), 'templates/log-analytics-extension.json', variables('templateUrlQueryString'))]",
-            "actionGroup": "[concat(variables('baseUrl'), 'templates/action-group.json', variables('templateUrlQueryString'))]",
-            "apiConnection": "[concat(variables('baseUrl'), 'templates/apiConnection/azureblob.json', variables('templateUrlQueryString'))]",
+            "storageAccount": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/storage-account.json', variables('templateUrlQueryString'))]",
+            "virtualNetwork": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/virtual-network.json', variables('templateUrlQueryString'))]",
+            "publicIPAddress": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/public-ipaddress.json', variables('templateUrlQueryString'))]",
+            "networkInterfacePublic": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/network-interface-public.json', variables('templateUrlQueryString'))]",
+            "networkSecurityGroup": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/network-security-group.json', variables('templateUrlQueryString'))]",
+            "virtualMachine": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/virtual-machine.json', variables('templateUrlQueryString'))]",
+            "scriptExtension": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/script-extension.json', variables('templateUrlQueryString'))]",
+            "appServicePlan": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service-plan.json', variables('templateUrlQueryString'))]",
+            "appService": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service.json', variables('templateUrlQueryString'))]",
+            "appServiceFunctions": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service-functions.json', variables('templateUrlQueryString'))]",
+            "applicationInsights": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/application-insights.json', variables('templateUrlQueryString'))]",
+            "logAnalytics": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/log-analytics.json', variables('templateUrlQueryString'))]",
+            "monitorAlerts": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/monitor-alerts.json', variables('templateUrlQueryString'))]",
+            "logAnalyticsExtension": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/log-analytics-extension.json', variables('templateUrlQueryString'))]",
+            "actionGroup": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/action-group.json', variables('templateUrlQueryString'))]",
+            "apiConnection": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/apiConnection/azureblob.json', variables('templateUrlQueryString'))]",
             "logicApps": {
-                "housekeeping": "[concat(variables('baseUrl'), 'templates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
+                "housekeeping": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
             },
             "scripts": {
-                "chefserver": "[concat(variables('baseUrl'), 'scripts/chef-server.sh', variables('templateUrlQueryString'))]",
-                "automateserver": "[concat(variables('baseUrl'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]",
-                "backup": "[concat(variables('baseUrl'), 'scripts/backup.sh', variables('templateUrlQueryString'))]"
+                "chefserver": "[concat(parameters('_artifactsLocation'), 'scripts/chef-server.sh', variables('templateUrlQueryString'))]",
+                "automateserver": "[concat(parameters('_artifactsLocation'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]",
+                "backup": "[concat(parameters('_artifactsLocation'), 'scripts/backup.sh', variables('templateUrlQueryString'))]"
             },
             "statsd": {
-                "azureStorage": "[concat(variables('baseUrl'), 'scripts/statsd-azure-queue.js', variables('templateUrlQueryString'))]"
+                "azureStorage": "[concat(parameters('_artifactsLocation'), 'scripts/statsd-azure-queue.js', variables('templateUrlQueryString'))]"
             }
         },
 
