@@ -275,24 +275,14 @@
             "statsd": {
                 "azureStorage": "[concat(parameters('_artifactsLocation'), 'scripts/statsd-azure-queue.js', variables('templateUrlQueryString'))]"
             }
-        },
-
-        "apiVersions": {
-            "deployments": "2017-05-10",
-            "config": "2016-08-01"
-        },
-
-        "tags": {
-            "provider": "2680257b-9f22-4261-b1ef-72412d367a68"
         }
     },
     "resources": [
-
         {
             "comments": "Resource to track Chef Automate installations using this template",
             "type": "Microsoft.Resources/deployments",
-            "name": "[concat('pid-', variables('tags').provider)]",
-            "apiVersion": "2017-05-10",  
+            "name": "pid-2680257b-9f22-4261-b1ef-72412d367a68",
+            "apiVersion": "2019-05-01",  
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -306,7 +296,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').sa, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -322,8 +312,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Storage account used for troubleshooting and function storage",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Storage account used for troubleshooting and function storage"
                         }
                     }
                 }
@@ -331,10 +320,10 @@
         },
 
         {
-            "comments": "Virtual Network resource to either create a network or return the details of an existing on",
+            "comments": "Virtual Network resource to either create a network or return the details of an existing one",
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').network.vnet, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -365,8 +354,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Log Analytics workspace to capture information about the health of the Chef Automate Managed App",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Virtual Network resource to either create a network or return the details of an existing one"
                         }                        
                     }
                 }
@@ -376,7 +364,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').nsg.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode":"Incremental",
                 "templateLink": {
@@ -395,8 +383,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "network security group limiting access to the Automate server",
-                            "provider": "[variables('tags').provider]"
+                            "description": "network security group limiting access to the Automate server"
                         }
                     }
                 }
@@ -406,7 +393,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').publicIPAddress.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -428,8 +415,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Public IP address for the Automate server",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Public IP address for the Automate server"
                         }
                     }
                 }
@@ -439,7 +425,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').nic.customer.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', variables('name').publicIPAddress.automate, '-Deployment')]",
                 "[concat('Microsoft.Resources/deployments/', variables('name').nsg.automate, '-Deployment')]"
@@ -468,8 +454,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Network card for the Automate server connected to the customer subnet",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Network card for the Automate server connected to the customer subnet"
                         }
                     }
                 }
@@ -479,7 +464,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').vm.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', variables('name').nic.customer.automate, '-Deployment')]",
                 "[concat('Microsoft.Resources/deployments/', variables('name').sa, '-Deployment')]"
@@ -520,8 +505,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Automate Server Virtual Machine",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Automate Server Virtual Machine"
                         }
                     }
                 }
@@ -531,7 +515,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').extension.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', variables('name').vm.automate, '-Deployment')]"
             ],
@@ -569,8 +553,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Script to install and configure the Automate server",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Script to install and configure the Automate server"
                         }
                     }
                 }
