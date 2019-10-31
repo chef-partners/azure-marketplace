@@ -119,7 +119,7 @@
             "metadata": {
                 "description": "Username for the ssh user"
             },
-            "defaultValue": "chefadmin"
+            "defaultValue": ""
         },
 
         "sshPublicKey": {
@@ -127,7 +127,7 @@
             "metadata": {
                 "description": "SSH public keys that should be applied to the user on the machines"
             },
-            "defaultValue": "chefadmin"
+            "defaultValue": ""
         },
 
         "vnetPrefix": {
