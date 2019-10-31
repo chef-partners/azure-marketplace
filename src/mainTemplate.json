@@ -248,27 +248,27 @@
         "templateUrlQueryString": "[if(empty(parameters('_artifactsLocationSasToken')), if(empty(variables('sasTokenFromDeployment')), '', concat('?', variables('sasTokenFromDeployment'))), concat('?', parameters('_artifactsLocationSasToken')))]",
 
         "urls": {
-            "storageAccount": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/storage-account.json', variables('templateUrlQueryString'))]",
-            "virtualNetwork": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/virtual-network.json', variables('templateUrlQueryString'))]",
-            "publicIPAddress": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/public-ipaddress.json', variables('templateUrlQueryString'))]",
-            "networkInterfacePublic": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/network-interface-public.json', variables('templateUrlQueryString'))]",
-            "networkSecurityGroup": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/network-security-group.json', variables('templateUrlQueryString'))]",
-            "virtualMachine": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/virtual-machine.json', variables('templateUrlQueryString'))]",
-            "scriptExtension": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/script-extension.json', variables('templateUrlQueryString'))]",
-            "appServicePlan": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/app-service-plan.json', variables('templateUrlQueryString'))]",
-            "appService": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/app-service.json', variables('templateUrlQueryString'))]",
-            "appServiceFunctions": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/app-service-functions.json', variables('templateUrlQueryString'))]",
-            "applicationInsights": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/application-insights.json', variables('templateUrlQueryString'))]",
-            "logAnalytics": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/log-analytics.json', variables('templateUrlQueryString'))]",
-            "monitorAlerts": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/monitor-alerts.json', variables('templateUrlQueryString'))]",
-            "logAnalyticsExtension": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/log-analytics-extension.json', variables('templateUrlQueryString'))]",
-            "actionGroup": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/action-group.json', variables('templateUrlQueryString'))]",
-            "apiConnection": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/apiConnection/azureblob.json', variables('templateUrlQueryString'))]",
+            "storageAccount": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/storage-account.json', variables('templateUrlQueryString'))]",
+            "virtualNetwork": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/virtual-network.json', variables('templateUrlQueryString'))]",
+            "publicIPAddress": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/public-ipaddress.json', variables('templateUrlQueryString'))]",
+            "networkInterfacePublic": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/network-interface-public.json', variables('templateUrlQueryString'))]",
+            "networkSecurityGroup": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/network-security-group.json', variables('templateUrlQueryString'))]",
+            "virtualMachine": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/virtual-machine.json', variables('templateUrlQueryString'))]",
+            "scriptExtension": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/script-extension.json', variables('templateUrlQueryString'))]",
+            "appServicePlan": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service-plan.json', variables('templateUrlQueryString'))]",
+            "appService": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service.json', variables('templateUrlQueryString'))]",
+            "appServiceFunctions": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service-functions.json', variables('templateUrlQueryString'))]",
+            "applicationInsights": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/application-insights.json', variables('templateUrlQueryString'))]",
+            "logAnalytics": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/log-analytics.json', variables('templateUrlQueryString'))]",
+            "monitorAlerts": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/monitor-alerts.json', variables('templateUrlQueryString'))]",
+            "logAnalyticsExtension": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/log-analytics-extension.json', variables('templateUrlQueryString'))]",
+            "actionGroup": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/action-group.json', variables('templateUrlQueryString'))]",
+            "apiConnection": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/apiConnection/azureblob.json', variables('templateUrlQueryString'))]",
             "logicApps": {
-                "housekeeping": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
+                "housekeeping": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
             },
             "scripts": {
-                "automateserver": "[concat(parameters('_artifactsLocation'), '/scripts/automate-server.sh', variables('templateUrlQueryString'))]",
+                "automateserver": "[concat(parameters('_artifactsLocation'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]",
             }
         }
     },
