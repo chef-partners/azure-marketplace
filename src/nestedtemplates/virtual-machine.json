@@ -17,23 +17,6 @@
         }
       },
   
-      "adminUsername": {
-        "type": "string"
-      },
-  
-      "adminPassword": {
-        "type": "securestring",
-        "defaultValue": ""
-      },
-  
-      "sshPublicKeys": {
-        "defaultValue": [],
-        "metadata": {
-          "description": "Administrator user SSH public keys"
-        },
-        "type": "array"
-      },
-  
       "authenticationType": {
         "allowedValues": [
           "password",
@@ -86,29 +69,8 @@
         }
       },
   
-      "customData": "[concat('#cloud-config\nmanage_etc_hosts: true\n\npackage_update: true\npackage_upgrade: false\nfqdn: ', parameters('fqdn'))]",
-  
       "osProfile": "[variables(concat('osprofile', parameters('authenticationType')))]",
-  
-      "osProfilepassword": {
-        "adminPassword": "[parameters('adminPassword')]",
-        "adminUsername": "[parameters('adminUsername')]",
-        "computerName": "[variables('name').computer]",
-        "customData": "[base64(variables('customData'))]"
-      },
-  
-      "osProfilesshPublicKey": {
-        "adminUsername": "[parameters('adminUsername')]",
-        "computerName": "[variables('name').computer]",
-        "customData": "[base64(variables('customData'))]",
-        "linuxConfiguration": {
-          "disablePasswordAuthentication": "true",
-          "ssh": {
-            "publicKeys": "[parameters('sshPublicKeys')]"
-          }
-        }
-      },
-  
+      
       "dataDisks": [
         {
           "name": "[concat(first(split(parameters('fqdn'), '.')), '-DataDisk')]",
@@ -121,10 +83,6 @@
       },
   
       "vmSize": "[parameters('vmSize')]",
-  
-      "apiVersions": {
-        "virtualMachines": "2016-04-30-preview"
-      },
   
       "image": {
         "publisher": "canonical",
@@ -140,7 +98,7 @@
       {
         "type": "Microsoft.Compute/virtualMachines",
         "name": "[variables('name').vm]",
-        "apiVersion": "[variables('apiVersions').virtualMachines]",
+        "apiVersion": "2019-03-01",
         "location": "[variables('location')]",
         "tags": "[variables('tags')]",
         "properties": {
@@ -186,7 +144,7 @@
           "diagnosticsProfile": {
             "bootDiagnostics": {
                 "enabled": true,
-                "storageUri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net')]"
+                "storageUri": "[reference(parameters('storageAccountName'), '2019-04-01').primaryEndpoints['blob']]"
             }
           }
         }

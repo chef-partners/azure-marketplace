@@ -40,10 +40,6 @@
         "nsg": "[parameters('nsgRef')]"
       },
   
-      "apiVersions": {
-        "networkInterfaces": "2015-06-15"
-      },
-
       "tags": "[parameters('tags')]"
   
     },
@@ -51,7 +47,7 @@
       {
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('name').nic]",
-        "apiVersion": "[variables('apiVersions').networkInterfaces]",
+        "apiVersion": "2019-09-01",
         "location": "[variables('location')]",
         "tags": "[variables('tags')]",
         "properties": {

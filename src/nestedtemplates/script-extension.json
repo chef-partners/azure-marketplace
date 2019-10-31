@@ -54,10 +54,6 @@
             "extension": "[concat(parameters('vmname'), '/', parameters('extensionName'))]"
         },
 
-        "apiVersions": {
-            "extensions": "2015-06-15"
-        },
-
         "arguments": "[if(empty(parameters('arguments')), parameters('scriptArguments'), concat('-e ', base64(string(parameters('arguments')))))]",
         "command": "[concat('./', parameters('scriptName'), ' ', variables('arguments'))]",
 
@@ -71,7 +67,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[variables('name').extension]",
             "location": "[parameters('location')]",
-            "apiVersion": "[variables('apiVersions').extensions]",
+            "apiVersion": "2019-03-01",
             "tags": "[variables('tags')]",
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",
@@ -81,7 +77,11 @@
                 "settings": {
                     "fileUris": [
                         "[variables('urls').script]"
-                    ],
+                    ]
+                },
+                "protectedSettings": {
+                    "storageAccountKey": "",
+                    "storageAccountName": "",
                     "commandToExecute": "[variables('command')]"
                 }
             }

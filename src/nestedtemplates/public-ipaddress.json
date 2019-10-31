@@ -2,14 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "apiVersion": {
-      "type": "string",
-      "metadata": {
-        "description": "API version of the resource to use"
-      },
-      "defaultValue": "2015-06-15"
-    },
-
     "publicIPAddressName": {
       "type": "string",
       "metadata": {
@@ -38,14 +30,9 @@
         "type": "object"
     }
   },
-  "variables": {
-    "apiVersions": {
-      "publicIpAddress": "[parameters('apiVersion')]"
-    }
-  },
   "resources": [
     {
-      "apiVersion": "[variables('apiVersions').publicIpAddress]",
+      "apiVersion": "2019-09-01",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[parameters('publicIPAddressName')]",
       "location": "[parameters('location')]",
@@ -59,12 +46,8 @@
     }
   ],
   "outputs": {
-    "publicIpId": {
-      "value": "[resourceId(concat('Microsoft.Network','/','publicIPAddresses'),parameters('publicIPAddressName'))]",
-      "type": "string"
-    },
     "fqdn": {
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIpAddressName')), variables('apiVersions').publicIpAddress).dnsSettings.fqdn]",
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIpAddressName')), '2019-09-01').dnsSettings.fqdn]",
       "type": "string"
     }
   }
