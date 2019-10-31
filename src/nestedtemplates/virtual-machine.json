@@ -16,6 +16,18 @@
           "description": "Size of the machine to create"
         }
       },
+
+      "adminUsername": {
+        "type": "string"
+      },
+
+      "sshPublicKeys": {
+        "defaultValue": [],
+        "metadata": {
+          "description": "Administrator user SSH public keys"
+        },
+        "type": "array"
+      },
   
       "authenticationType": {
         "allowedValues": [

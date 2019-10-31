@@ -222,11 +222,11 @@
             "automate": "[parameters('automateVMSize')]"
         },
 
-        "admin_username": "[parameters('sshUser')]",
+        "adminUsername": "[parameters('sshUser')]",
         "admin": {
             "sshPublicKeys": [
                 {
-                    "path": "[concat('/home/', variables('admin_username'), '/.ssh/authorized_keys')]",
+                    "path": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
                     "keyData": "[parameters('sshPublicKey')]"
                 }]
         },
