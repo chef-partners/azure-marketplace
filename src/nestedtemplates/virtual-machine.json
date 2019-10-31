@@ -80,8 +80,22 @@
           "os": "[concat(first(split(parameters('fqdn'), '.')), '-OSDisk')]"
         }
       },
+
+      "customData": "[concat('#cloud-config\nmanage_etc_hosts: true\n\npackage_update: true\npackage_upgrade: false\nfqdn: ', parameters('fqdn'))]",
   
       "osProfile": "[variables(concat('osprofile', parameters('authenticationType')))]",
+
+      "osProfilesshPublicKey": {
+        "adminUsername": "[parameters('adminUsername')]",
+        "computerName": "[variables('name').computer]",
+        "customData": "[base64(variables('customData'))]",
+        "linuxConfiguration": {
+          "disablePasswordAuthentication": "true",
+          "ssh": {
+            "publicKeys": "[parameters('sshPublicKeys')]"
+          }
+        }
+      },
       
       "dataDisks": [
         {

@@ -481,7 +481,7 @@
                         "value": "[variables('vmSize').automate]"
                     },
                     "adminUsername": {
-                        "value": "[variables('admin_username')]"
+                        "value": "[variables('adminUsername')]"
                     },
                     "sshPublicKeys": {
                         "value": "[variables('admin').sshPublicKeys]"
