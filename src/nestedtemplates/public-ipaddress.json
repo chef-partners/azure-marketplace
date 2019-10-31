@@ -46,6 +46,10 @@
     }
   ],
   "outputs": {
+    "publicIpId": {
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]",
+      "type": "string"
+    },
     "fqdn": {
       "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIpAddressName')), '2019-09-01').dnsSettings.fqdn]",
       "type": "string"

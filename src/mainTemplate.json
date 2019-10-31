@@ -438,6 +438,9 @@
                     "nicName": {
                         "value": "[variables('name').nic.customer.automate]"
                     },
+                    "publicIPAddressRef": {
+                        "value": "[reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.publicIpId.value]"
+                    },
                     "subnetRef": {
                         "value": "[reference(concat(variables('name').network.vnet, '-Deployment')).outputs.subnetRef.value]"
                     },
