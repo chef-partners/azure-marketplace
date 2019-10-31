@@ -49,7 +49,7 @@
     },
     "resources": [
           {
-              "apiVersion": "2015-06-15",
+              "apiVersion": "2019-09-01",
               "type": "Microsoft.Network/virtualNetworks",
               "name": "[variables('name').vnet]",
               "location": "[variables('location')]",
@@ -74,7 +74,7 @@
     ],
     "outputs": {
       "subnetRef": {
-        "value": "[concat(resourceId(variables('network').resourceGroup, 'Microsoft.Network/virtualNetworks', variables('name').vnet), '/subnets/', variables('name').subnet)]",
+        "value": "[resourceId(variables('network').resourceGroup, 'Microsoft.Network/virtualNetworks/subnets', variables('name').vnet, variables('name').subnet)]",
         "type": "string"
       },
       "existingVNet": {

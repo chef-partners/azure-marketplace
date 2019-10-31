@@ -98,28 +98,26 @@
                 "description": "State if the template should try to auto discover the SAS token from the deployment. This is used when building and testing the template in VSTS."
             }
         },
-        "baseUrl": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/chef-partners/azure-marketplace/master/src/",
-            "metadata": {
-                "description": "URL from which nested templates can be found",
-                "artifactsBaseUrl": ""
-            }
-        },
-        "azureStorageSASToken": {
+        "_artifactsLocation": {
             "type": "string",
             "metadata": {
-                "description": "SAS token that has been generated if the templates are to be read from azure table storage"
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
             },
-            "defaultValue": ""            
+        "defaultValue": "[deployment().properties.templateLink.uri]"
         },
-
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
+            },
+            "defaultValue": ""
+        },
         "sshUser": {
             "type": "string",
             "metadata": {
                 "description": "Username for the ssh user"
             },
-            "defaultValue": "chefadmin"
+            "defaultValue": ""
         },
 
         "sshPublicKey": {
@@ -127,7 +125,7 @@
             "metadata": {
                 "description": "SSH public keys that should be applied to the user on the machines"
             },
-            "defaultValue": "chefadmin"
+            "defaultValue": ""
         },
 
         "vnetPrefix": {
@@ -164,9 +162,6 @@
 
         "unique": "[uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name, parameters('prefix'))]",
         "uniqueShort": "[if(empty(parameters('uniqueShort')), substring(variables('unique'), 0, 4), parameters('uniqueShort'))]",
-
-        "baseUrl": "[if(not(empty(parameters('baseUrl'))), if(endsWith(parameters('baseUrl'), '/'), parameters('baseUrl'), concat(parameters('baseUrl'), '/')), if(contains(deployment().properties, 'templateLink'), uri(deployment().properties.templateLink.uri, '.'), ''))]",
-
         "location": "[parameters('location')]",
 
         "name": {
@@ -227,11 +222,11 @@
             "automate": "[parameters('automateVMSize')]"
         },
 
-        "admin_username": "[parameters('sshUser')]",
+        "adminUsername": "[parameters('sshUser')]",
         "admin": {
             "sshPublicKeys": [
                 {
-                    "path": "[concat('/home/', variables('admin_username'), '/.ssh/authorized_keys')]",
+                    "path": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
                     "keyData": "[parameters('sshPublicKey')]"
                 }]
         },
@@ -250,54 +245,39 @@
         },
 
         "sasTokenFromDeployment": "[if(parameters('autoDiscoverSASToken'), if(contains(deployment().properties, 'templateLink'), if(equals(length(split(deployment().properties.templateLink.uri, '?')), 2), last(split(deployment().properties.templateLink.uri, '?')), ''), ''), '')]",
-        "templateUrlQueryString": "[if(empty(parameters('azureStorageSASToken')), if(empty(variables('sasTokenFromDeployment')), '', concat('?', variables('sasTokenFromDeployment'))), concat('?', parameters('azureStorageSASToken')))]",
+        "templateUrlQueryString": "[if(empty(parameters('_artifactsLocationSasToken')), if(empty(variables('sasTokenFromDeployment')), '', concat('?', variables('sasTokenFromDeployment'))), concat('?', parameters('_artifactsLocationSasToken')))]",
 
         "urls": {
-            "storageAccount": "[concat(variables('baseUrl'), 'templates/storage-account.json', variables('templateUrlQueryString'))]",
-            "virtualNetwork": "[concat(variables('baseUrl'), 'templates/virtual-network.json', variables('templateUrlQueryString'))]",
-            "publicIPAddress": "[concat(variables('baseUrl'), 'templates/public-ipaddress.json', variables('templateUrlQueryString'))]",
-            "networkInterfacePublic": "[concat(variables('baseUrl'), 'templates/network-interface-public.json', variables('templateUrlQueryString'))]",
-            "networkSecurityGroup": "[concat(variables('baseUrl'), 'templates/network-security-group.json', variables('templateUrlQueryString'))]",
-            "virtualMachine": "[concat(variables('baseUrl'), 'templates/virtual-machine.json', variables('templateUrlQueryString'))]",
-            "scriptExtension": "[concat(variables('baseUrl'), 'templates/script-extension.json', variables('templateUrlQueryString'))]",
-            "appServicePlan": "[concat(variables('baseUrl'), 'templates/app-service-plan.json', variables('templateUrlQueryString'))]",
-            "appService": "[concat(variables('baseUrl'), 'templates/app-service.json', variables('templateUrlQueryString'))]",
-            "appServiceFunctions": "[concat(variables('baseUrl'), 'templates/app-service-functions.json', variables('templateUrlQueryString'))]",
-            "applicationInsights": "[concat(variables('baseUrl'), 'templates/application-insights.json', variables('templateUrlQueryString'))]",
-            "logAnalytics": "[concat(variables('baseUrl'), 'templates/log-analytics.json', variables('templateUrlQueryString'))]",
-            "monitorAlerts": "[concat(variables('baseUrl'), 'templates/monitor-alerts.json', variables('templateUrlQueryString'))]",
-            "logAnalyticsExtension": "[concat(variables('baseUrl'), 'templates/log-analytics-extension.json', variables('templateUrlQueryString'))]",
-            "actionGroup": "[concat(variables('baseUrl'), 'templates/action-group.json', variables('templateUrlQueryString'))]",
-            "apiConnection": "[concat(variables('baseUrl'), 'templates/apiConnection/azureblob.json', variables('templateUrlQueryString'))]",
+            "storageAccount": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/storage-account.json', variables('templateUrlQueryString'))]",
+            "virtualNetwork": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/virtual-network.json', variables('templateUrlQueryString'))]",
+            "publicIPAddress": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/public-ipaddress.json', variables('templateUrlQueryString'))]",
+            "networkInterfacePublic": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/network-interface-public.json', variables('templateUrlQueryString'))]",
+            "networkSecurityGroup": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/network-security-group.json', variables('templateUrlQueryString'))]",
+            "virtualMachine": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/virtual-machine.json', variables('templateUrlQueryString'))]",
+            "scriptExtension": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/script-extension.json', variables('templateUrlQueryString'))]",
+            "appServicePlan": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service-plan.json', variables('templateUrlQueryString'))]",
+            "appService": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service.json', variables('templateUrlQueryString'))]",
+            "appServiceFunctions": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/app-service-functions.json', variables('templateUrlQueryString'))]",
+            "applicationInsights": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/application-insights.json', variables('templateUrlQueryString'))]",
+            "logAnalytics": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/log-analytics.json', variables('templateUrlQueryString'))]",
+            "monitorAlerts": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/monitor-alerts.json', variables('templateUrlQueryString'))]",
+            "logAnalyticsExtension": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/log-analytics-extension.json', variables('templateUrlQueryString'))]",
+            "actionGroup": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/action-group.json', variables('templateUrlQueryString'))]",
+            "apiConnection": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/apiConnection/azureblob.json', variables('templateUrlQueryString'))]",
             "logicApps": {
-                "housekeeping": "[concat(variables('baseUrl'), 'templates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
+                "housekeeping": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
             },
             "scripts": {
-                "chefserver": "[concat(variables('baseUrl'), 'scripts/chef-server.sh', variables('templateUrlQueryString'))]",
-                "automateserver": "[concat(variables('baseUrl'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]",
-                "backup": "[concat(variables('baseUrl'), 'scripts/backup.sh', variables('templateUrlQueryString'))]"
-            },
-            "statsd": {
-                "azureStorage": "[concat(variables('baseUrl'), 'scripts/statsd-azure-queue.js', variables('templateUrlQueryString'))]"
+                "automateserver": "[concat(parameters('_artifactsLocation'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]"
             }
-        },
-
-        "apiVersions": {
-            "deployments": "2017-05-10",
-            "config": "2016-08-01"
-        },
-
-        "tags": {
-            "provider": "2680257b-9f22-4261-b1ef-72412d367a68"
         }
     },
     "resources": [
-
         {
             "comments": "Resource to track Chef Automate installations using this template",
             "type": "Microsoft.Resources/deployments",
-            "name": "[concat('pid-', variables('tags').provider)]",
-            "apiVersion": "2017-05-10",  
+            "name": "pid-2680257b-9f22-4261-b1ef-72412d367a68",
+            "apiVersion": "2019-05-01",  
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -311,7 +291,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').sa, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -327,8 +307,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Storage account used for troubleshooting and function storage",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Storage account used for troubleshooting and function storage"
                         }
                     }
                 }
@@ -336,10 +315,10 @@
         },
 
         {
-            "comments": "Virtual Network resource to either create a network or return the details of an existing on",
+            "comments": "Virtual Network resource to either create a network or return the details of an existing one",
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').network.vnet, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -370,8 +349,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Log Analytics workspace to capture information about the health of the Chef Automate Managed App",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Virtual Network resource to either create a network or return the details of an existing one"
                         }                        
                     }
                 }
@@ -381,7 +359,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').nsg.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode":"Incremental",
                 "templateLink": {
@@ -400,8 +378,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "network security group limiting access to the Automate server",
-                            "provider": "[variables('tags').provider]"
+                            "description": "network security group limiting access to the Automate server"
                         }
                     }
                 }
@@ -411,7 +388,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').publicIPAddress.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -433,8 +410,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Public IP address for the Automate server",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Public IP address for the Automate server"
                         }
                     }
                 }
@@ -444,7 +420,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').nic.customer.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', variables('name').publicIPAddress.automate, '-Deployment')]",
                 "[concat('Microsoft.Resources/deployments/', variables('name').nsg.automate, '-Deployment')]"
@@ -473,8 +449,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Network card for the Automate server connected to the customer subnet",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Network card for the Automate server connected to the customer subnet"
                         }
                     }
                 }
@@ -484,7 +459,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').vm.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', variables('name').nic.customer.automate, '-Deployment')]",
                 "[concat('Microsoft.Resources/deployments/', variables('name').sa, '-Deployment')]"
@@ -506,7 +481,7 @@
                         "value": "[variables('vmSize').automate]"
                     },
                     "adminUsername": {
-                        "value": "[variables('admin_username')]"
+                        "value": "[variables('adminUsername')]"
                     },
                     "sshPublicKeys": {
                         "value": "[variables('admin').sshPublicKeys]"
@@ -525,8 +500,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Automate Server Virtual Machine",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Automate Server Virtual Machine"
                         }
                     }
                 }
@@ -536,7 +510,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "[concat(variables('name').extension.automate, '-Deployment')]",
-            "apiVersion": "[variables('apiVersions').deployments]",
+            "apiVersion": "2019-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', variables('name').vm.automate, '-Deployment')]"
             ],
@@ -564,9 +538,7 @@
                             "USERNAME": "[parameters('sshUser')]",
                             "FQDN": "[concat(reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value)]",
                             "CHEFORG": "[parameters('chefOrg')]",
-                            "CHEFORGDESCRIPTION": "[parameters('chefOrgDescription')]",
-                            "SANAME": "[variables('name').storageAccount]",
-                            "SAACCESSKEY": "[reference(concat(variables('name').sa, '-Deployment')).outputs.accesskey.value]"
+                            "CHEFORGDESCRIPTION": "[parameters('chefOrgDescription')]"
                         }
                     },
                     "extensionName": {
@@ -574,8 +546,7 @@
                     },
                     "tags": {
                         "value": {
-                            "description": "Script to install and configure the Automate server",
-                            "provider": "[variables('tags').provider]"
+                            "description": "Script to install and configure the Automate server"
                         }
                     }
                 }
