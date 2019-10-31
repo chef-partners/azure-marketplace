@@ -268,7 +268,7 @@
                 "housekeeping": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/logicApps/housekeeping.json', variables('templateUrlQueryString'))]"
             },
             "scripts": {
-                "automateserver": "[concat(parameters('_artifactsLocation'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]",
+                "automateserver": "[concat(parameters('_artifactsLocation'), 'scripts/automate-server.sh', variables('templateUrlQueryString'))]"
             }
         }
     },
