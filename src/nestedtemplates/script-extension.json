@@ -80,8 +80,6 @@
                     ]
                 },
                 "protectedSettings": {
-                    "storageAccountKey": "",
-                    "storageAccountName": "",
                     "commandToExecute": "[variables('command')]"
                 }
             }
