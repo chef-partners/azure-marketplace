@@ -538,9 +538,7 @@
                             "USERNAME": "[parameters('sshUser')]",
                             "FQDN": "[concat(reference(concat(variables('name').publicIPAddress.automate, '-Deployment')).outputs.fqdn.value)]",
                             "CHEFORG": "[parameters('chefOrg')]",
-                            "CHEFORGDESCRIPTION": "[parameters('chefOrgDescription')]",
-                            "SANAME": "[variables('name').storageAccount]",
-                            "SAACCESSKEY": "[reference(concat(variables('name').sa, '-Deployment')).outputs.accesskey.value]"
+                            "CHEFORGDESCRIPTION": "[parameters('chefOrgDescription')]"
                         }
                     },
                     "extensionName": {
